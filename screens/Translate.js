@@ -1,5 +1,14 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, ScrollView, Image, Keyboard } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  Keyboard,
+} from 'react-native';
 
 const letterImages = {
   A: require('../assets/signs/A.png'),
@@ -33,95 +42,147 @@ const letterImages = {
 export default function Translate() {
   const [input, setInput] = useState('');
   const [translatedLetters, setTranslatedLetters] = useState([]);
+  const [slideshowIndex, setSlideshowIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
 
-  const handleChange = (text) => {
-    setInput(text);
+  useEffect(() => {
+    let interval = null;
+    if (isPlaying && translatedLetters.length > 0) {
+      interval = setInterval(() => {
+        setSlideshowIndex((prev) =>
+          prev < translatedLetters.length - 1 ? prev + 1 : 0
+        );
+      }, 800);
+    }
+    return () => clearInterval(interval);
+  }, [isPlaying, translatedLetters]);
 
-    // Cek jika karakter terakhir adalah spasi
-    if (text.endsWith(' ')) {
-      const words = text.trim().toUpperCase(); // ambil tanpa spasi di akhir
-      const letters = words.split('').filter(char => /^[A-Z]$/.test(char)); // hanya A-Z
-      setTranslatedLetters(letters);
-      Keyboard.dismiss(); // auto tutup keyboard
+  const handleTranslate = () => {
+    const text = input.trim().toUpperCase();
+    const letters = text.split('').filter((char) => /^[A-Z]$/.test(char));
+    setTranslatedLetters(letters);
+    setSlideshowIndex(0);
+    setIsPlaying(false);
+    Keyboard.dismiss();
+  };
+
+  const handlePlay = () => {
+    if (translatedLetters.length > 0) {
+      setIsPlaying(true);
     }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Translate</Text>
-      <Text style={styles.subheading}>Write the word you want to translate into sign language</Text>
+      <Text style={styles.subheading}>
+        Write the word you want to translate into sign language
+      </Text>
 
       <TextInput
         style={styles.input}
         value={input}
-        onChangeText={handleChange}
-        placeholder="......"
+        onChangeText={setInput}
+        placeholder="Type here..."
         autoCapitalize="none"
       />
 
+      <TouchableOpacity onPress={handleTranslate} style={styles.translateButton}>
+        <Text style={styles.buttonText}>Translate</Text>
+      </TouchableOpacity>
+
       <Text style={styles.resultTitle}>Translation Results</Text>
 
-      <ScrollView horizontal contentContainerStyle={styles.imageRow}>
-        {translatedLetters.map((char, index) => (
-          <View key={index} style={styles.imageBox}>
-            <Image source={letterImages[char]} style={styles.image} />
-            <Text style={styles.imageLabel}>{char}</Text>
-          </View>
-        ))}
-      </ScrollView>
+      {translatedLetters.length > 0 && (
+        <>
+          {isPlaying ? (
+            <View style={styles.centeredImageBox}>
+              <Image
+                source={letterImages[translatedLetters[slideshowIndex]]}
+                style={styles.image}
+              />
+              <Text style={styles.imageLabel}>
+                {translatedLetters[slideshowIndex]}
+              </Text>
+            </View>
+          ) : (
+            <ScrollView horizontal contentContainerStyle={styles.imageRow}>
+              {translatedLetters.map((char, index) => (
+                <View key={index} style={styles.imageBox}>
+                  <Image source={letterImages[char]} style={styles.image} />
+                  <Text style={styles.imageLabel}>{char}</Text>
+                </View>
+              ))}
+            </ScrollView>
+          )}
+
+          <TouchableOpacity onPress={handlePlay} style={styles.playButton}>
+            <Text style={styles.buttonText}>▶ Play</Text>
+          </TouchableOpacity>
+        </>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 60,
-    paddingHorizontal: 20,
+    alignItems: 'center',
+    padding: 20,
+    paddingBottom: 40,
     backgroundColor: '#fff',
-    flex: 1,
   },
-  heading: {
-    fontSize: 22,
+  title: {
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
-  },
-  subheading: {
-    color: '#666',
-    marginTop: 4,
-    marginBottom: 20,
+    marginVertical: 20,
   },
   input: {
+    width: 296,
+    height: 57,
     borderWidth: 1,
-    borderColor: '#ddd',
-    padding: 14,
+    borderColor: '#ccc',
     borderRadius: 8,
-    marginBottom: 30,
-    backgroundColor: '#f9f9f9',
+    paddingHorizontal: 15,
+    marginBottom: 16,
   },
-  resultTitle: {
-    fontSize: 18,
+  translateButton: {
+    width: 296,
+    height: 57,
+    backgroundColor: '#4F48B5',
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 32,
+  },
+  translateText: {
+    color: '#fff',
+    fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 12,
   },
-  imageRow: {
-    flexDirection: 'row',
+  resultContainer: {
     alignItems: 'center',
-  },
-  imageBox: {
-    alignItems: 'center',
-    marginRight: 14,
-    padding: 10,
-    backgroundColor: '#fef6e4',
-    borderRadius: 10,
-    elevation: 2,
+    marginTop: 10,
+    gap: 12,
   },
   image: {
-    width: 60,
-    height: 80,
+    width: 200,
+    height: 200,
     resizeMode: 'contain',
-    marginBottom: 5,
+    marginBottom: 16,
   },
-  imageLabel: {
-    fontWeight: 'bold',
+  playButton: {
+    width: 296,
+    height: 57,
+    backgroundColor: "#4F48B5",
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 30,
+  },
+  buttonText: {
+    color: "#FFFFFF",
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });
