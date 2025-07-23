@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 
-// Ganti dengan URL Ngrok yang Anda dapatkan dari Colab
 const NGROK_URL = "https://cefd049acd26.ngrok-free.app"; 
 
 export default function Transcribe() {
@@ -87,7 +86,6 @@ export default function Transcribe() {
   );
 }
 
-// ... (styles tetap sama)
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
   camera: { flex: 1 },
