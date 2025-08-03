@@ -1,6 +1,6 @@
 <h1>Your Sign Language Bridge</h1>
 
-**Bimbing** is a React Native-based mobile application designed to bridge the communication gap between deaf and hearing friends in Indonesia. This application focuses on translating Indonesian Sign Language (SIBI).
+**BIMBING** is a React Native-based mobile application designed to bridge the communication gap between deaf and hearing friends in Indonesia. This application focuses on translating Indonesian Sign Language (SIBI).
 
 ## 🎯 Background
 Communication is the key to social inclusion. Many deaf people in Indonesia face obstacles when interacting with the general public who do not understand sign language. This project aims to provide practical and accessible communication tools via smartphones.
