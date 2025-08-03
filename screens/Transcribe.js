@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 
-const NGROK_URL = "https://cefd049acd26.ngrok-free.app"; 
+const NGROK_URL = "https://efccaa257f9d.ngrok-free.app";
 
 export default function Transcribe() {
   const [permission, requestPermission] = useCameraPermissions();
